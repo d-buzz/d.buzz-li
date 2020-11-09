@@ -1,0 +1,30 @@
+{
+  "name": "dbuzz-shortli",
+  "version": "1.0.0",
+  "description": "Dbuzz url shortener service",
+  "main": "app.js",
+  "scripts": {
+    "init": "node ./init",
+    "start": "node ./src/app.js",
+    "dev": "nodemon ./src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d-buzz/d.buzz-li.git"
+  },
+  "author": "lyereon.26@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/d-buzz/d.buzz-li/issues"
+  },
+  "homepage": "https://github.com/d-buzz/d.buzz-li#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.6",
+    "url-exist": "^2.0.2"
+  }
+}
