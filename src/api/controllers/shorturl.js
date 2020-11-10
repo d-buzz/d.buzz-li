@@ -102,10 +102,16 @@ const getOrigUrl = async (req, res) => {
         utils.jsonResponse(response.data, "Failed to log clicks", 400)
       );
     }
-    res.redirect(getUrl.url);
+    // return original url
+    response.data = {
+        origUrl : getUrl.url
+    }
   } catch (error) {
     return res.json(utils.jsonResponse(response.data, error.message, 400));
   }
+  return res.json(
+    utils.jsonResponse(response.data, response.message, response.code)
+  );
 };
 
 module.exports = {
