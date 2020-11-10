@@ -1,6 +1,9 @@
 const urlExist = require("url-exist");
 const crypto = require("crypto");
+const _url = require("url");
 const appconfig = require("../config/app");
+const requestIp = require("@supercharge/request-ip");
+const urlMetadata = require("url-metadata");
 
 const jsonResponse = (data, message, code = 200) => {
   return {
@@ -23,13 +26,44 @@ const checkUrlExists = (url) => {
 
 const generateKeyword = (url) => {
   let hash = createHash(url);
-  console.log(hash)
   const len = hash.length;
-  return hash.substr(
-    len - parseInt(appconfig.URL_KEYWORD_LEN),
-    len
-  );
+  return hash.substr(len - parseInt(appconfig.URL_KEYWORD_LEN), len);
 };
+
+const getUrlDomain = (url) => {
+  const myurl = _url.parse(url);
+  return myurl.host;
+};
+
+const getRequestIp = (request) => {
+  return requestIp.getClientIp(request);
+};
+
+const getUrlMetadata = (url) => {
+  return new Promise(function (resolve, reject) {
+    try {
+      urlMetadata(url).then(
+        (metadata) => {
+          resolve(metadata);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    } catch (error) {
+      reject(error)
+    }
+  });
+};
+
+const getUrlRemoteTitle = async (url) => {
+  let title = '';
+  const metadata = await getUrlMetadata(url)
+  if(metadata && metadata.hasOwnProperty('title')){
+    title = metadata.title
+  }
+  return title;
+}
 
 const createHash = (string) => {
   let hash = crypto.createHash("sha512", appconfig.HASH_SECRET);
@@ -41,4 +75,8 @@ module.exports = {
   jsonResponse,
   checkUrlExists,
   generateKeyword,
+  getUrlDomain,
+  getUrlMetadata,
+  getUrlRemoteTitle,
+  getRequestIp,
 };

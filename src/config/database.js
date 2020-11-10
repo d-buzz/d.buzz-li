@@ -17,17 +17,21 @@ con.connect(function (err) {
 
 const _this = {
   query: ($sql, $params = []) => {
-    return new Promise((resolve,reject) => {
-       con.promise()
+    return new Promise((resolve, reject) => {
+      con
+        .promise()
         .query($sql, $params)
         .then((data) => {
-            resolve(data);
+          resolve(data);
         })
         .catch((error) => {
-            reject(error);
-        })
-        .then(() => con.end());
+          reject(error);
+        });
     });
   },
 };
-module.exports = _this;
+
+function database() {
+  return _this;
+}
+module.exports = database;

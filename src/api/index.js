@@ -1,8 +1,10 @@
 const express = require('express')
 const api = express()
 const { 
-    shorturlRouter
+    shorturlRouter,
+    whitelistRouter
 } = require('./routes')
 
-api.use('/',shorturlRouter)
+api.use('/url',shorturlRouter)
+api.use('/whitelist',whitelistRouter)
 module.exports = api

@@ -3,6 +3,7 @@ const ENV = process.env;
 module.exports = {
     HOST: ENV.APP_HOST,
     PORT: ENV.APP_PORT,
+    URL_SHORT_DOMAIN: ENV.URL_SHORT_DOMAIN,
     URL_KEYWORD_LEN: ENV.URL_KEYWORD_LEN,
     HASH_SECRET: ENV.HASH_SECRET,
     DATABASE : {

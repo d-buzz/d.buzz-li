@@ -7,7 +7,7 @@ const _this = {
   _set_sql: "",
 
   DB: () => {
-    return _db;
+    return new _db;
   },
 
   raw: async ($sql, $params = []) => {
@@ -121,7 +121,7 @@ const _this = {
 
   insert: async($timestamp = true) =>
   {
-      let result = 0;
+      let result = false;
       try {
         if ($timestamp) {
             _this.set('created_at', (new Date())).set('updated_at', (new Date()));
@@ -131,7 +131,7 @@ const _this = {
         _this._set_sql = '';
         _this.params = [];
         const [rows] = await _this.DB().query(sql,params);
-        result = rows.length > 0 ? rows[0].insertId : 0;
+        result = rows.affectedRows > 0 
       } catch (error) {
         console.log("Sql error:", error);
       }
@@ -150,7 +150,7 @@ const _this = {
         _this._set_sql = '';
         _this.params = [];
         const [rows] = await _this.DB().query(sql,params);
-        result = rows.length ? true : false;
+        result = rows.affectedRows > 0 
       } catch (error) {
         console.log("Sql error:", error);
       }

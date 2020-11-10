@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const api = require("./api");
 const { appconfig } = require("./config");
+const { getOrigUrl } = require("./api/controllers/shorturl")
 
 const app = express();
 app.use(cors());
@@ -18,7 +19,8 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use('/',api);
+app.get("/:keyword", getOrigUrl);
+app.use("/api/v1", api);
 
 app.listen(appconfig.PORT, () => {
   console.log(`App listening at ${appconfig.HOST}:${appconfig.PORT}`);
