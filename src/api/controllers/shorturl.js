@@ -4,8 +4,7 @@ const { urlModel, whitelistedDomainModel } = require("../../models");
 const appconfig = require("./../../config/app");
 
 // Make url shorten
-const shortenUrl = async (req, res) => {
-  const { url } = req.body;
+const shortenUrl = async (req, res, next) => {
   let response = { data: null, message: "Success", code: 200 };
   try {
     // input validation
@@ -18,6 +17,7 @@ const shortenUrl = async (req, res) => {
         utils.jsonResponse(response.data, v.errors.url.message, 400)
       );
     }
+    const { url } = req.body;
     // check if url exists / valid
     const validateUrl = await utils.checkUrlExists(url);
     if (!validateUrl) {
@@ -38,8 +38,7 @@ const shortenUrl = async (req, res) => {
     if (whitelistedDomain && whitelistedDomain.length > 0) {
       const domains = whitelistedDomain.map((x) => x.domain);
       const passedUrl =
-        domains.filter((x) => utils.getUrlDomain(x) === utils.getUrlDomain(url))
-          .length > 0;
+        domains.filter((x) => x === utils.getUrlDomain(url)).length > 0;
       if (!passedUrl) {
         return res.json(
           utils.jsonResponse(response.data, "Blacklisted domain", 400)
@@ -63,11 +62,11 @@ const shortenUrl = async (req, res) => {
       title: urlMetaTitle,
       clicks: 0,
     };
-    // store shortened url
+    // save shortened url
     const saveIt = await urlModel.insert(dataToStore);
     if (!saveIt) {
       return res.json(
-        utils.jsonResponse(response.data, "Failed to store shortened url", 400)
+        utils.jsonResponse(response.data, "Failed to save shortened url", 400)
       );
     }
     // return shortened url
@@ -75,6 +74,7 @@ const shortenUrl = async (req, res) => {
       shortenedUrl: appconfig.URL_SHORT_DOMAIN + "/" + keyword,
     };
   } catch (error) {
+    next(error);
     return res.json(utils.jsonResponse(response.data, error.message, 400));
   }
   return res.json(
@@ -83,7 +83,7 @@ const shortenUrl = async (req, res) => {
 };
 
 // Get original url by keyword
-const getOrigUrl = async (req, res) => {
+const getOrigUrl = async (req, res, next) => {
   const { keyword } = req.params;
   let response = { data: null, message: "Success", code: 200 };
   try {
@@ -96,7 +96,10 @@ const getOrigUrl = async (req, res) => {
     }
     // update number of clicks
     let clicks = parseInt(getUrl.clicks) + 1;
-    const updateClicks = await urlModel.updateClicks(getUrl.id, parseInt(clicks));
+    const updateClicks = await urlModel.updateClicks(
+      getUrl.id,
+      parseInt(clicks)
+    );
     if (!updateClicks) {
       return res.json(
         utils.jsonResponse(response.data, "Failed to log clicks", 400)
@@ -104,9 +107,10 @@ const getOrigUrl = async (req, res) => {
     }
     // return original url
     response.data = {
-        origUrl : getUrl.url
-    }
+      origUrl: getUrl.url,
+    };
   } catch (error) {
+    next(error);
     return res.json(utils.jsonResponse(response.data, error.message, 400));
   }
   return res.json(

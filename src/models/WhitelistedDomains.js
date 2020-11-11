@@ -5,11 +5,17 @@ const _this = {
     _model.table = "whitelisted_domains";
     return _model;
   },
+  findById: async (id) => {
+    return await _this.build().find(id)
+  },
   getAll: async (limit = 100, offset = 0) => {
-    return await _this.build().get(limit, offset);
+    return await _this.build().orderBy("domain").get(limit, offset);
   },
   getAllActive: async () => {
     return await _this.build().where("is_active", 1).get();
+  },
+  getByDomain: async (domain) => {
+    return await _this.build().where("domain", domain).first();
   },
   insert: async (data) => {
     return await _this.build().set("domain", data["domain"]).insert();
@@ -18,7 +24,7 @@ const _this = {
     return await _this.build().set("domain",domain).update(id);
   },
   updateActiveStatus: async (id, status) => {
-    return await _this.build().set("status",status).update(id);
+    return await _this.build().set("is_active",status).update(id);
   },
 };
 

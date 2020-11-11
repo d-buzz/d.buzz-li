@@ -4,6 +4,8 @@ const _url = require("url");
 const appconfig = require("../config/app");
 const requestIp = require("@supercharge/request-ip");
 const urlMetadata = require("url-metadata");
+const isValidDomain = require('is-valid-domain')
+const isReachable = require('is-reachable');
 
 const jsonResponse = (data, message, code = 200) => {
   return {
@@ -65,6 +67,14 @@ const getUrlRemoteTitle = async (url) => {
   return title;
 }
 
+const validateDomain = (domain) => {
+  return isValidDomain(domain);
+}
+
+const checkIfDomainIsReachable = async (domain) => {
+  return await isReachable(domain);
+}
+
 const createHash = (string) => {
   let hash = crypto.createHash("sha512", appconfig.HASH_SECRET);
   hash.update(string);
@@ -79,4 +89,6 @@ module.exports = {
   getUrlMetadata,
   getUrlRemoteTitle,
   getRequestIp,
+  validateDomain,
+  checkIfDomainIsReachable
 };

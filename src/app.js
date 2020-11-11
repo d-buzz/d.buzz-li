@@ -17,9 +17,7 @@ app.get("/", (req, res) => {
     status: 200,
   });
 });
-
-app.use("/api/v1", api);
-
+app.use("/api/v1",api);
 app.listen(appconfig.PORT, () => {
   console.log(`App listening at ${appconfig.HOST}:${appconfig.PORT}`);
 });

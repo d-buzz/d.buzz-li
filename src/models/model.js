@@ -7,7 +7,7 @@ const _this = {
   _set_sql: "",
 
   DB: () => {
-    return new _db;
+    return new _db();
   },
 
   raw: async ($sql, $params = []) => {
@@ -16,7 +16,7 @@ const _this = {
       const [rows] = await _this.DB().query($sql, $params);
       result = rows;
     } catch (error) {
-      console.log("Sql error:", error);
+      throw error.message;
     }
     return result;
   },
@@ -27,7 +27,7 @@ const _this = {
       const [rows] = await _this.DB().query(`SELECT * FROM ${_this.table}`);
       result = rows;
     } catch (error) {
-      console.log("Sql error:", error);
+      throw error.message;
     }
     return result;
   },
@@ -85,7 +85,7 @@ const _this = {
       const [rows] = await _this.DB().query(sql, params);
       result = rows;
     } catch (error) {
-      console.log("Sql error:", error);
+      throw error.message;
     }
     return result;
   },
@@ -93,12 +93,14 @@ const _this = {
   find: async ($id, $id_column = "id") => {
     let result = null;
     try {
-        const sql =
-        "SELECT * FROM " + _this.table + ` WHERE ${$id_column} = ${$id} LIMIT 1`;
-        const [rows] = await _this.DB().query(sql);
-        result = rows.length > 0 ? rows[0] : null;
+      const sql =
+        "SELECT * FROM " +
+        _this.table +
+        ` WHERE ${$id_column} = ${$id} LIMIT 1`;
+      const [rows] = await _this.DB().query(sql);
+      result = rows.length > 0 ? rows[0] : null;
     } catch (error) {
-        console.log("Sql error:", error);
+      throw error.message;
     }
     return result;
   },
@@ -114,62 +116,67 @@ const _this = {
       const [rows] = await _this.DB().query(sql, params);
       result = rows.length > 0 ? rows[0] : null;
     } catch (error) {
-      console.log("Sql error:", error);
+      throw error.message;
     }
     return result;
   },
 
-  insert: async($timestamp = true) =>
-  {
-      let result = false;
-      try {
-        if ($timestamp) {
-            _this.set('created_at', (new Date())).set('updated_at', (new Date()));
-        }
-        const sql = 'INSERT INTO ' + _this.table + _this._set_sql;
-        const params = _this.params;
-        _this._set_sql = '';
-        _this.params = [];
-        const [rows] = await _this.DB().query(sql,params);
-        result = rows.affectedRows > 0 
-      } catch (error) {
-        console.log("Sql error:", error);
+  insert: async ($timestamp = true) => {
+    let result = false;
+    try {
+      if ($timestamp) {
+        _this.set("created_at", new Date()).set("updated_at", new Date());
       }
-      return result;
+      const sql = "INSERT INTO " + _this.table + _this._set_sql;
+      const params = _this.params;
+      _this._set_sql = "";
+      _this.params = [];
+      const [rows] = await _this.DB().query(sql, params);
+      result = rows.affectedRows > 0;
+    } catch (error) {
+      throw error.message;
+    }
+    return result;
   },
 
-  update: async ($id, $id_column = 'id', $timestamp = true) =>
-  {
-      let result = false
-      try {
-        if ($timestamp) {
-            _this.set('updated_at', (new Date()));
-        }
-        let sql = 'UPDATE ' + _this.table + _this._set_sql + ' WHERE ' + $id_column + ' = ' + $id;
-        const params = _this.params;
-        _this._set_sql = '';
-        _this.params = [];
-        const [rows] = await _this.DB().query(sql,params);
-        result = rows.affectedRows > 0 
-      } catch (error) {
-        console.log("Sql error:", error);
+  update: async ($id, $id_column = "id", $timestamp = true) => {
+    let result = false;
+    try {
+      if ($timestamp) {
+        _this.set("updated_at", new Date());
       }
-      return result;
+      let sql =
+        "UPDATE " +
+        _this.table +
+        _this._set_sql +
+        " WHERE " +
+        $id_column +
+        " = " +
+        $id;
+      const params = _this.params;
+      _this._set_sql = "";
+      _this.params = [];
+      const [rows] = await _this.DB().query(sql, params);
+      result = rows.affectedRows > 0;
+    } catch (error) {
+      throw error.message;
+    }
+    return result;
   },
-  count: async () =>
-  {
-      let result = 0;
-      try {
-        const sql = 'SELECT COUNT(*) as count FROM ' + _this.table + _this._select_sql;
-        const params = _this.params;
-        _this._select_sql = '';
-        _this.params = [];
-        const [rows] = await _this.DB().query(sql,params);
-        result = rows.length > 0 ? rows[0].count : 0;
-      } catch (error) {
-        console.log("Sql error:", error);
-      }
-      return result;
+  count: async () => {
+    let result = 0;
+    try {
+      const sql =
+        "SELECT COUNT(*) as count FROM " + _this.table + _this._select_sql;
+      const params = _this.params;
+      _this._select_sql = "";
+      _this.params = [];
+      const [rows] = await _this.DB().query(sql, params);
+      result = rows.length > 0 ? rows[0].count : 0;
+    } catch (error) {
+      throw error.message;
+    }
+    return result;
   },
 };
 

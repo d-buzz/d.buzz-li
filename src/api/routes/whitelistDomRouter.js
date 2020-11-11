@@ -4,12 +4,11 @@ const {
   getDomainList,
   insertDomain,
   updateDomain,
-  updateStatus,
+  updateActiveStatus,
 } = require("./../controllers/whitelistDomain");
 
 whitelistRouter.get("/list/:limit?/:offset?", getDomainList);
 whitelistRouter.post("/add", insertDomain);
 whitelistRouter.post("/update", updateDomain);
-whitelistRouter.post("/activate", updateStatus);
-whitelistRouter.post("/deactivate", updateStatus);
+whitelistRouter.post("/status-update", updateActiveStatus);
 module.exports = whitelistRouter;
