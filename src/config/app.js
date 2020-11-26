@@ -14,5 +14,8 @@ module.exports = {
         PASS: ENV.DB_PASS,
         NAME: ENV.DB_NAME
     },
-
+    ADMIN: {
+        USER: ENV.ADMIN_USER,
+        PASS: ENV.ADMIN_PASS 
+    }
 }

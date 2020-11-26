@@ -101,7 +101,8 @@ const updateDomain = async (req, res, next) => {
     });
     const matched = await v.check();
     if (!matched) {
-      return res.json(utils.jsonResponse(response.data, v.errors, 400));
+      const errKeys = Object.keys(v.errors)
+      return res.json(utils.jsonResponse(response.data, v.errors[errKeys[0]], 400));
     }
     // check domain_id if exists
     const checkDomainId = await whitelistedDomainModel.findById(domain_id);
@@ -121,7 +122,7 @@ const updateDomain = async (req, res, next) => {
     }
     // check if domain name has no changes
     if (checkDomainId.domain === domain) {
-      return res.json(utils.jsonResponse(response.data, "No changes has made"));
+      return res.json(utils.jsonResponse(response.data, "No changes has made", 400));
     }
     // check if domain is valid
     if (!utils.validateDomain(domain)) {

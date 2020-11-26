@@ -1,7 +1,6 @@
 const utils = require("../../services/utils");
 const { Validator } = require("node-input-validator");
 const { urlModel, whitelistedDomainModel } = require("../../models");
-const appconfig = require("./../../config/app");
 
 // Make url shorten
 const shortenUrl = async (req, res, next) => {
@@ -27,7 +26,7 @@ const shortenUrl = async (req, res, next) => {
     const checkExistsDB = await urlModel.getByUrl(url);
     if (checkExistsDB) {
       response.data = {
-        shortenedUrl: appconfig.URL_SHORT_DOMAIN + "/" + checkExistsDB.keyword,
+        keyword: checkExistsDB.keyword,
       };
       return res.json(
         utils.jsonResponse(response.data, "Url already shortened")
@@ -71,7 +70,7 @@ const shortenUrl = async (req, res, next) => {
     }
     // return shortened url
     response.data = {
-      shortenedUrl: appconfig.URL_SHORT_DOMAIN + "/" + keyword,
+      keyword: keyword,
     };
   } catch (error) {
     next(error);

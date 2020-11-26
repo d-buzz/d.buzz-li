@@ -9,7 +9,7 @@ const _this = {
     return await _this.build().find(id)
   },
   getAll: async (limit = 100, offset = 0) => {
-    return await _this.build().orderBy("domain").get(limit, offset);
+    return await _this.build().orderBy("created_at","DESC").get(limit, offset);
   },
   getAllActive: async () => {
     return await _this.build().where("is_active", 1).get();

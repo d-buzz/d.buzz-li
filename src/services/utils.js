@@ -4,8 +4,9 @@ const _url = require("url");
 const appconfig = require("../config/app");
 const requestIp = require("@supercharge/request-ip");
 const urlMetadata = require("url-metadata");
-const isValidDomain = require('is-valid-domain')
-const isReachable = require('is-reachable');
+const isValidDomain = require("is-valid-domain");
+const isReachable = require("is-reachable");
+const jwt = require("jsonwebtoken");
 
 const jsonResponse = (data, message, code = 200) => {
   return {
@@ -53,32 +54,36 @@ const getUrlMetadata = (url) => {
         }
       );
     } catch (error) {
-      reject(error)
+      reject(error);
     }
   });
 };
 
 const getUrlRemoteTitle = async (url) => {
-  let title = '';
-  const metadata = await getUrlMetadata(url)
-  if(metadata && metadata.hasOwnProperty('title')){
-    title = metadata.title
+  let title = "";
+  const metadata = await getUrlMetadata(url);
+  if (metadata && metadata.hasOwnProperty("title")) {
+    title = metadata.title;
   }
   return title;
-}
+};
 
 const validateDomain = (domain) => {
   return isValidDomain(domain);
-}
+};
 
 const checkIfDomainIsReachable = async (domain) => {
   return await isReachable(domain);
-}
+};
 
 const createHash = (string) => {
   let hash = crypto.createHash("sha512", appconfig.HASH_SECRET);
   hash.update(string);
   return hash.digest("hex");
+};
+
+const jwtSign = (data) => {
+  return jwt.sign(data, appconfig.HASH_SECRET, { expiresIn: "1d" });
 };
 
 module.exports = {
@@ -90,5 +95,6 @@ module.exports = {
   getUrlRemoteTitle,
   getRequestIp,
   validateDomain,
-  checkIfDomainIsReachable
+  checkIfDomainIsReachable,
+  jwtSign,
 };
